@@ -1,0 +1,41 @@
+﻿IF OBJECT_ID('dbo.Basket', 'U') IS NOT NULL
+	DROP TABLE dbo.Basket;
+IF OBJECT_ID('dbo.SKU', 'U') IS NOT NULL 
+	DROP TABLE dbo.SKU;
+IF OBJECT_ID('dbo.Family', 'U') IS NOT NULL 
+	DROP TABLE dbo.Family;
+
+GO
+
+CREATE TABLE dbo.SKU 
+(
+	ID INT IDENTITY 
+		CONSTRAINT PK_SKU PRIMARY KEY,
+	Code AS 'S' + CAST(ID AS VARCHAR(10)),
+	Name VARCHAR(15)
+);
+CREATE TABLE dbo.Family 
+(
+	ID INT IDENTITY 
+		CONSTRAINT PK_Family PRIMARY KEY,
+	SurName VARCHAR(15),
+	BudgetValue MONEY
+);
+CREATE TABLE dbo.Basket
+(
+	ID INT IDENTITY 
+		CONSTRAINT PK_Basket PRIMARY KEY,
+	ID_SKU INT NOT NULL
+		CONSTRAINT FK_Baket_SKU FOREIGN KEY
+		REFERENCES dbo.SKU(ID),
+	ID_Family INT NOT NULL
+		CONSTRAINT FK_Basket_Family FOREIGN KEY
+		REFERENCES dbo.Family(ID),
+	Quantity INT 
+		CONSTRAINT CK_Basket_Quantity CHECK(Quantity >= 0),
+	Value INT 
+		CONSTRAINT CK_Basket_Value CHECK(Value >= 0),
+	PurchaseDate DATETIME2 
+		CONSTRAINT DFT_Basket_PurchaseDate DEFAULT SYSDATETIME(),
+	DiscountValue DECIMAL(18, 2)
+);
